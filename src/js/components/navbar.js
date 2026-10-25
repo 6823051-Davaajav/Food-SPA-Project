@@ -1,0 +1,2 @@
+import {t} from '../i18n/i18n.js';
+export function renderNavbar(){return `<header class="top"><div class="navwrap"><a class="brand" href="#/overview">🥬 ${t('brand')}</a><nav>${['overview','search','calculation','books','contact'].map(k=>`<a href="#/${k}" class="${location.hash==='#/'+k?'active':''}">${t(k)}</a>`).join('')}</nav><button id="lang" type="button">🌐 ${t('switch')}</button></div></header>`;}
