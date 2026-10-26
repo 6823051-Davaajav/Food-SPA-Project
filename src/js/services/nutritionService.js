@@ -1,5 +1,5 @@
 
-const DATA_URL = "./data/nutritions.json";
+const DATA_URL = "./src/data/nutritions.json";
 
 export async function getNutritions() {
   const response = await fetch(DATA_URL);
