@@ -1,0 +1,60 @@
+
+@use "sass:color";
+
+$primaryColor: #2bac73;
+$primaryColorDark: color.scale($primaryColor, $lightness: -15%);
+$secondaryColor: #ff914d;
+$secondaryColorDark: color.scale($secondaryColor, $lightness: -15%);
+
+:root {
+  --border: #ececf2;
+  --sidebar-width: clamp(280px, 22vw, 340px);
+  --sidebar-bg: #ffffff;
+  --page-bg: #ffffff;
+  --text-main: #23262f;
+  --text-soft: #6b7280;
+  --green: #2bac73;
+  --orange: #ff914d;
+}
+
+
+@import "../../node_modules/bulma/bulma";
+@import "./components/buttons";
+@import "./components/navbar";
+@import "./layouts/sidebarPageLayout";
+@import "./components/sidebarMenuList";
+@import "./layouts/pageTableContentsLayout";
+@import "./components/imageModal";
+
+
+/* Үндсэн хуудасны гарчиг */
+
+.app-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+/* Гарчгийн доорх улбар шар зураас */
+
+.app-line {
+  width: 96px;
+  height: 4px;
+  background: var(--orange);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+/* Үндсэн хуудасны агуулга */
+
+.section {
+  padding: 3rem 1.5rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}

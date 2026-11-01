@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Сүү",
+    "nameEn": "Milk",
+    "group": "Сүүн бүтээгдэхүүн",
+    "energy": 61,
+    "protein": 3.2,
+    "fat": 3.3,
+    "carbohydrate": 4.8
+  },
+  {
+    "id": 2,
+    "name": "Үхрийн мах",
+    "nameEn": "Beef",
+    "group": "Мах, махан бүтээгдэхүүн",
+    "energy": 250,
+    "protein": 26,
+    "fat": 15,
+    "carbohydrate": 0
+  },
+  {
+    "id": 3,
+    "name": "Цагаан будаа",
+    "nameEn": "White rice",
+    "group": "Үр тариа",
+    "energy": 130,
+    "protein": 2.7,
+    "fat": 0.3,
+    "carbohydrate": 28
+  }
+]

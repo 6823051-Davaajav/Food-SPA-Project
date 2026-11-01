@@ -1,0 +1,41 @@
+
+.image-counter-tag {
+  cursor: pointer;
+  text-align: center;
+  color: white;
+  border-radius: 999px;
+  background-color: #363636;
+  padding: 4px 10px;
+}
+
+.image-counter-tag:hover {
+  background-color: #222;
+}
+
+#imageModal {
+  .modal-card {
+    width: 640px;
+    max-width: 95%;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .modal-content {
+    max-width: 90vw;
+    max-height: 85vh;
+    text-align: center;
+  }
+
+  .modal-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    margin: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .modal-close {
+    cursor: pointer;
+  }
+}

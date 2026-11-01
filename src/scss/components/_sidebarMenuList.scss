@@ -1,0 +1,48 @@
+
+.app-menu-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+.app-toggle-sublist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--hover-bg, #f7f7fa);
+  }
+}
+
+.app-sublist {
+  margin-left: 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--border);
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+.app-sublist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    accent-color: var(--green);
+  }
+
+  &:hover {
+    background: var(--hover-bg, #f7f7fa);
+  }
+}
