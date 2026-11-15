@@ -10,12 +10,21 @@ import { renderFoodGroupList } from "../components/searchFoodGroupListSidebar.js
 
 import { filterFoods } from "../fn/foodSearchEvents.js";
 import { t, getCurrentLanguage } from "../i18n/i18n.js";
-import { renderNutritionTable } from "../components/nutritionTables.js";
+
+import {
+  renderNutritionTable,
+  renderFoodImages,
+  renderCollectionInformation
+} from "../components/nutritionTables.js";
+
 
 import {
   renderImageModal,
   initImageModal
 } from "../components/imageModal.js";
+
+
+
 
 export async function renderSearchPage() {
   const app = document.getElementById("app");
@@ -155,11 +164,27 @@ export async function renderSearchPage() {
 
       details.appendChild(nutritionContainer);
 
-      // 11. Нэмэлт мэдээлэл
+      
+      // 11. Цуглуулсан мэдээлэл
+      if (selected.includes("collection_information")) {
+        const collectionTitle = document.createElement("h4");
+        collectionTitle.className = "title is-5 mt-4";
+        collectionTitle.textContent =
+          t("searchSettings.collection_information");
+
+        details.appendChild(collectionTitle);
+
+        const collectionContainer = document.createElement("div");
+        collectionContainer.innerHTML =
+          renderCollectionInformation(food);
+
+        details.appendChild(collectionContainer);
+      }
+
+      // 11.1 Бусад нэмэлт мэдээлэл
       const optionalGroups = [
         ["minerals", food.minerals],
         ["vitamins", food.vitamins],
-        ["collection_information", food.collection_information],
         ["edible_inedible_part", food.edible_inedible_part],
         ["pretreatment_conditions", food.pretreatment_conditions],
         ["description", food.description]
@@ -199,6 +224,7 @@ export async function renderSearchPage() {
 
         details.appendChild(extraTable);
       }
+
 
       // 12. Хүнсний зураг
       if (selected.includes("images")) {

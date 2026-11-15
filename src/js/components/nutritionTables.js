@@ -70,3 +70,39 @@ export function renderFoodImages(images = []) {
     </div>
   `;
 }
+ 
+export function renderCollectionInformation(food) {
+  const isEnglish = getCurrentLanguage() === "en";
+  const info = food.collection_information || {};
+
+  const fields = isEnglish
+    ? [
+        ["Collection Area", info.collection_area],
+        ["Collection Date", info.collection_date],
+        ["Sample Selection", info.sample_selection],
+        ["Additional Information", info.additional_information]
+      ]
+    : [
+        ["Цуглуулсан газар", info.collection_area],
+        ["Цуглуулсан огноо", info.collection_date],
+        ["Дээж сонгосон үндэслэл", info.sample_selection],
+        ["Нэмэлт мэдээлэл", info.additional_information]
+      ];
+
+  const missing = isEnglish
+    ? "No information available"
+    : "Мэдээлэл байхгүй";
+
+  return `
+    <table class="table is-fullwidth is-bordered">
+      <tbody>
+        ${fields.map(([label, value]) => `
+          <tr>
+            <th>${escapeHtml(label)}</th>
+            <td>${escapeHtml(String(value ?? missing))}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}

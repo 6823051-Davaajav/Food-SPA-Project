@@ -8,7 +8,13 @@
     "protein": 3.2,
     "fat": 3.3,
     "carbohydrate": 4.8,
-    "groupEn": "Milk and Milk products"
+    "groupEn": "Milk and Milk products",
+    "collection_information": {
+      "collection_area": null,
+      "collection_date": null,
+      "sample_selection": null,
+      "additional_information": null
+    }
   },
   {
     "id": 2,
@@ -19,7 +25,13 @@
     "protein": 26,
     "fat": 15,
     "carbohydrate": 0,
-    "groupEn": "Meat and Meat products"
+    "groupEn": "Meat and Meat products",
+    "collection_information": {
+      "collection_area": null,
+      "collection_date": null,
+      "sample_selection": null,
+      "additional_information": null
+    }
   },
   {
     "id": 3,
@@ -30,6 +42,12 @@
     "protein": 2.7,
     "fat": 0.3,
     "carbohydrate": 28,
-    "groupEn": "Cereals and Cereal products"
+    "groupEn": "Cereals and Cereal products",
+    "collection_information": {
+      "collection_area": null,
+      "collection_date": null,
+      "sample_selection": null,
+      "additional_information": null
+    }
   }
 ]
