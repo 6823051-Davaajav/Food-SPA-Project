@@ -1,15 +1,36 @@
 
 import { escapeHtml } from "../fn/format.js";
+import { t, getCurrentLanguage } from "../i18n/i18n.js";
 
 export function renderNutritionTable(food) {
+  const language = getCurrentLanguage();
+  const isEnglish = language === "en";
+
+  const foodName = isEnglish
+    ? (food.nameEn || food.name)
+    : food.name;
+
+  const foodGroup = isEnglish
+    ? (food.groupEn || t(`foodGroups.${food.group}`))
+    : food.group;
+
+  const missing = isEnglish
+    ? "No information available"
+    : "Мэдээлэл байхгүй";
+
+  const formatValue = (value, unit) =>
+    value != null ? `${value} ${unit}` : missing;
+
   const rows = [
-    ["Хүнсний нэр", food.name],
-    ["Англи нэр", food.nameEn],
-    ["Хүнсний бүлэг", food.group],
-    ["Илчлэг", food.energy != null ? `${food.energy} ккал` : "Мэдээлэл байхгүй"],
-    ["Уураг", food.protein != null ? `${food.protein} г` : "Мэдээлэл байхгүй"],
-    ["Өөх тос", food.fat != null ? `${food.fat} г` : "Мэдээлэл байхгүй"],
-    ["Нүүрс ус", food.carbohydrate != null ? `${food.carbohydrate} г` : "Мэдээлэл байхгүй"]
+    [t("foodSearch.foodName"), foodName],
+    [t("foodSearch.group"), foodGroup],
+    [t("foodSearch.energy"), formatValue(food.energy, "kcal")],
+    [t("foodSearch.protein"), formatValue(food.protein, "g")],
+    [t("foodSearch.fat"), formatValue(food.fat, "g")],
+    [
+      t("foodSearch.carbohydrate"),
+      formatValue(food.carbohydrate, "g")
+    ]
   ];
 
   return `
@@ -27,8 +48,12 @@ export function renderNutritionTable(food) {
 }
 
 export function renderFoodImages(images = []) {
+  const language = getCurrentLanguage();
+
   if (!images.length) {
-    return "<p>Зураг байхгүй.</p>";
+    return language === "en"
+      ? "<p>No images available.</p>"
+      : "<p>Зураг байхгүй.</p>";
   }
 
   return `
@@ -36,7 +61,7 @@ export function renderFoodImages(images = []) {
       ${images.map(item => `
         <img
           src="${escapeHtml(item.image)}"
-          alt="Хүнсний зураг"
+          alt="${escapeHtml(t("foodSearch.image"))}"
           class="food-image"
           data-image="${escapeHtml(item.image)}"
           style="width: 250px; cursor: pointer; border-radius: 8px;"

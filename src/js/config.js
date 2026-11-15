@@ -1,4 +1,10 @@
+
 export const DATA_MODE = "local";
-export const LOCAL_NUTRITIONS_URL = "./data/nutritions.json";
+
+export const LOCAL_NUTRITIONS_URL =
+  "./data/nutritions-bilingual.json";
+
 export const API_BASE_URL = "https://example.com/api";
-export const API_NUTRITIONS_URL = `${API_BASE_URL}/nutritions`;
+
+export const API_NUTRITIONS_URL =
+  `${API_BASE_URL}/nutritions`;

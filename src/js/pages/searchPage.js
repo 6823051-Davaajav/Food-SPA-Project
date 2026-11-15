@@ -8,6 +8,10 @@ import { renderSearchFoodName } from "../components/searchFoodNameSidebar.js";
 import { renderSearchSettings } from "../components/searchSettingsSidebar.js";
 import { renderFoodGroupList } from "../components/searchFoodGroupListSidebar.js";
 
+import { filterFoods } from "../fn/foodSearchEvents.js";
+import { t, getCurrentLanguage } from "../i18n/i18n.js";
+import { renderNutritionTable } from "../components/nutritionTables.js";
+
 import {
   renderImageModal,
   initImageModal
@@ -15,22 +19,36 @@ import {
 
 export async function renderSearchPage() {
   const app = document.getElementById("app");
-
   if (!app) return;
 
-  app.textContent = "Хүнсний мэдээлэл уншиж байна...";
+  const isEnglish = getCurrentLanguage() === "en";
+
+  const text = (mn, en) => isEnglish ? en : mn;
+
+  const getFoodName = (food) =>
+    isEnglish ? (food.nameEn || food.name) : food.name;
+
+  const getFoodGroup = (food) =>
+    isEnglish
+      ? (food.groupEn || t(`foodGroups.${food.group}`))
+      : food.group;
+
+  app.textContent = text(
+    "Хүнсний мэдээлэл уншиж байна...",
+    "Loading food information..."
+  );
 
   try {
-    // 1. Хүнсний мэдээлэл унших
+    // 1. Хүнсний мэдээлэл авах
     const foods = await getNutritions();
 
-    // 2. Зургийн мэдээлэл унших
+    // 2. Зургийн мэдээлэл авах
     let images = [];
 
     try {
       images = await getImages();
     } catch (error) {
-      console.warn("Зургийн мэдээлэл уншихад алдаа:", error);
+      console.warn("Image loading error:", error);
     }
 
     // 3. Хүнсний бүлгүүд
@@ -43,12 +61,12 @@ export async function renderSearchPage() {
       ${renderSearchFoodName()}
       ${renderSearchSettings()}
       ${renderFoodGroupList(foodGroups)}
-      <p>Нийт хүнс: ${foods.length}</p>
+      <p>${t("foodSearch.totalFoods")}: ${foods.length}</p>
     `;
 
-    // 5. Үндсэн агуулга
+    // 5. Үндсэн хэсэг
     const mainContent = `
-      <h2>Хүнсний найрлагын мэдээлэл</h2>
+      <h2>${t("foodSearch.results")}</h2>
       <div id="foodResults"></div>
       <div id="foodDetails" class="mt-5"></div>
       ${renderImageModal()}
@@ -57,11 +75,11 @@ export async function renderSearchPage() {
     app.innerHTML = renderSidebarPageLayout({
       sidebarContent,
       mainContent,
-      pageTitle: "Хүнсний мэдээллийн сан",
+      pageTitle: t("foodSearch.title"),
       pageId: "searchPage"
     });
 
-    // 6. Зургийн modal идэвхжүүлэх
+    // 6. Зургийн modal
     initImageModal();
 
     const searchInput = document.getElementById("foodSearch");
@@ -71,7 +89,7 @@ export async function renderSearchPage() {
 
     let selectedFood = null;
 
-    // 7. Зүүн талын цэс нээх, хаах
+    // 7. Sidebar цэс нээх, хаах
     document.querySelectorAll(".app-toggle-sublist")
       .forEach(toggle => {
         toggle.addEventListener("click", event => {
@@ -85,109 +103,108 @@ export async function renderSearchPage() {
         });
       });
 
-    // 8. Дэлгэрэнгүй мэдээлэл
-    function showFoodDetails(food) {
-      selectedFood = food;
-      details.replaceChildren();
-
-      const title = document.createElement("h3");
-      title.className = "title is-4";
-      title.textContent =
-        `${food.name} - Дэлгэрэнгүй мэдээлэл`;
-
-      const description = document.createElement("p");
-      description.textContent = "100 грамм хүнсний найрлага";
-
-      const table = document.createElement("table");
-      table.className = "table is-fullwidth is-bordered";
-
-      const information = [
-        ["Хүнсний нэр", food.name],
-        ["Англи нэр", food.nameEn],
-        ["Хүнсний бүлэг", food.group]
-      ];
-
-      // Сонгосон найрлагын мэдээлэл
-      const selected = Array.from(
+    // 8. Сонгосон checkbox-ууд
+    function getSelectedNutritions() {
+      return Array.from(
         document.querySelectorAll(
           'input[name="nutrition"]:checked'
         )
       ).map(input => input.value);
+    }
 
-      const formatValue = (value, unit = "") => {
-        if (value == null || value === "") {
-          return "Мэдээлэл оруулаагүй";
+    // 9. Дэлгэрэнгүй мэдээлэл
+    function showFoodDetails(food) {
+      selectedFood = food;
+      details.replaceChildren();
+
+      const selected = getSelectedNutritions();
+
+      const title = document.createElement("h3");
+      title.className = "title is-4";
+      title.textContent =
+        `${getFoodName(food)} - ${text(
+          "Дэлгэрэнгүй мэдээлэл",
+          "Detailed Information"
+        )}`;
+
+      const description = document.createElement("p");
+      description.textContent = t("foodSearch.unit");
+
+      details.append(title, description);
+
+      // 10. Хоёр хэлтэй шим тэжээлийн хүснэгт
+      const nutritionContainer = document.createElement("div");
+      nutritionContainer.innerHTML = renderNutritionTable(food);
+
+      const nutritionTable =
+        nutritionContainer.querySelector("table");
+
+      if (nutritionTable) {
+        // Үндсэн найрлагыг сонгоогүй бол
+        // илчлэг, уураг, өөх тос, нүүрс усыг нуух
+        if (!selected.includes("proximates")) {
+          const rows = nutritionTable.querySelectorAll("tr");
+
+          rows.forEach((row, index) => {
+            if (index >= 2) {
+              row.remove();
+            }
+          });
         }
-
-        return `${value}${unit}`;
-      };
-
-      // Үндсэн найрлага
-      if (selected.includes("proximates")) {
-        information.push(
-          ["Илчлэг", formatValue(food.energy, " ккал")],
-          ["Уураг", formatValue(food.protein, " г")],
-          ["Өөх тос", formatValue(food.fat, " г")],
-          ["Нүүрс ус", formatValue(food.carbohydrate, " г")]
-        );
       }
 
-      // Нэмэлт мэдээлэл
+      details.appendChild(nutritionContainer);
+
+      // 11. Нэмэлт мэдээлэл
       const optionalGroups = [
-        ["minerals", "Эрдэс бодис", food.minerals],
-        ["vitamins", "Амин дэм", food.vitamins],
-        [
-          "collection_information",
-          "Цуглуулсан мэдээлэл",
-          food.collection_information
-        ],
-        [
-          "edible_inedible_part",
-          "Идэх боломжтой хэсэг",
-          food.edible_inedible_part
-        ],
-        [
-          "pretreatment_conditions",
-          "Урьдчилсан боловсруулалт",
-          food.pretreatment_conditions
-        ],
-        ["description", "Тайлбар", food.description]
+        ["minerals", food.minerals],
+        ["vitamins", food.vitamins],
+        ["collection_information", food.collection_information],
+        ["edible_inedible_part", food.edible_inedible_part],
+        ["pretreatment_conditions", food.pretreatment_conditions],
+        ["description", food.description]
       ];
 
-      optionalGroups.forEach(([key, label, value]) => {
-        if (!selected.includes(key)) return;
+      const selectedOptional = optionalGroups.filter(
+        ([key]) => selected.includes(key)
+      );
 
-        const displayValue =
-          value == null || value === ""
-            ? "Мэдээлэл оруулаагүй"
-            : typeof value === "object"
-              ? JSON.stringify(value)
-              : String(value);
+      if (selectedOptional.length > 0) {
+        const extraTable = document.createElement("table");
+        extraTable.className =
+          "table is-fullwidth is-bordered mt-4";
 
-        information.push([label, displayValue]);
-      });
+        selectedOptional.forEach(([key, value]) => {
+          const row = document.createElement("tr");
 
-      // Хүснэгт байгуулах
-      information.forEach(([label, value]) => {
-        const row = document.createElement("tr");
+          const th = document.createElement("th");
+          th.textContent = t(`searchSettings.${key}`);
 
-        const th = document.createElement("th");
-        th.textContent = label;
+          const td = document.createElement("td");
 
-        const td = document.createElement("td");
-        td.textContent = value ?? "";
+          if (value == null || value === "") {
+            td.textContent = text(
+              "Мэдээлэл оруулаагүй",
+              "No information available"
+            );
+          } else if (typeof value === "object") {
+            td.textContent = JSON.stringify(value, null, 2);
+          } else {
+            td.textContent = String(value);
+          }
 
-        row.append(th, td);
-        table.appendChild(row);
-      });
+          row.append(th, td);
+          extraTable.appendChild(row);
+        });
 
-      details.append(title, description, table);
+        details.appendChild(extraTable);
+      }
 
-      // 9. Хүнсний зураг
+      // 12. Хүнсний зураг
       if (selected.includes("images")) {
         const imageTitle = document.createElement("h4");
         imageTitle.className = "title is-5 mt-4";
-        imageTitle.textContent = "Хүнсний зураг";
+        imageTitle.textContent = t("foodSearch.image");
 
         details.appendChild(imageTitle);
 
@@ -195,7 +212,11 @@ export async function renderSearchPage() {
 
         if (foodImages.length === 0) {
           const message = document.createElement("p");
-          message.textContent = "Зураг оруулаагүй.";
+          message.textContent = text(
+            "Зураг оруулаагүй.",
+            "No images available."
+          );
+
           details.appendChild(message);
         } else {
           const imageList = document.createElement("div");
@@ -205,7 +226,7 @@ export async function renderSearchPage() {
             const image = document.createElement("img");
 
             image.src = item.image;
-            image.alt = food.name;
+            image.alt = getFoodName(food);
             image.className = "food-image";
             image.dataset.image = item.image;
 
@@ -219,7 +240,10 @@ export async function renderSearchPage() {
             image.onerror = () => {
               image.replaceWith(
                 document.createTextNode(
-                  "Зураг ачаалж чадсангүй."
+                  text(
+                    "Зураг ачаалж чадсангүй.",
+                    "Failed to load image."
+                  )
                 )
               );
             };
@@ -232,7 +256,7 @@ export async function renderSearchPage() {
       }
     }
 
-    // 10. Хүнсний нэр болон бүлгээр хайх
+    // 13. Хүнсний нэр болон бүлгээр хайх
     function displayFoods(keyword = "") {
       const searchText = keyword.trim().toLowerCase();
 
@@ -242,32 +266,22 @@ export async function renderSearchPage() {
         )
       ).map(input => input.value);
 
-      const filtered = foods.filter(food => {
-        const matchesName =
-          (food.name ?? "")
-            .toLowerCase()
-            .includes(searchText) ||
-          (food.nameEn ?? "")
-            .toLowerCase()
-            .includes(searchText);
-
-        const matchesGroup =
-          selectedGroups.length === 0 ||
-          selectedGroups.includes(food.group);
-
-        return matchesName && matchesGroup;
-      });
+      const filtered = filterFoods(
+        foods,
+        searchText,
+        selectedGroups
+      );
 
       results.replaceChildren();
       details.replaceChildren();
       selectedFood = null;
 
       if (filtered.length === 0) {
-        results.textContent = "Илэрц олдсонгүй.";
+        results.textContent = t("foodSearch.noResults");
         return;
       }
 
-      // Хүснэгт
+      // 14. Үр дүнгийн хүснэгт
       const table = document.createElement("table");
       table.className =
         "table is-fullwidth is-striped is-hoverable app-tbl";
@@ -275,7 +289,11 @@ export async function renderSearchPage() {
       const thead = document.createElement("thead");
       const headerRow = document.createElement("tr");
 
-      ["№", "Хүнсний нэр", "Код"].forEach(label => {
+      [
+        "№",
+        t("foodSearch.foodName"),
+        text("Код", "Code")
+      ].forEach(label => {
         const th = document.createElement("th");
         th.textContent = label;
         headerRow.appendChild(th);
@@ -296,7 +314,7 @@ export async function renderSearchPage() {
         const nameButton = document.createElement("button");
         nameButton.type = "button";
         nameButton.className = "button is-text";
-        nameButton.textContent = food.name;
+        nameButton.textContent = getFoodName(food);
 
         nameButton.addEventListener("click", () => {
           showFoodDetails(food);
@@ -315,7 +333,7 @@ export async function renderSearchPage() {
       results.appendChild(table);
     }
 
-    // 11. Нэрээр хайх
+    // 15. Нэрээр хайх
     searchInput?.addEventListener("input", () => {
       displayFoods(searchInput.value);
     });
@@ -324,7 +342,7 @@ export async function renderSearchPage() {
       displayFoods(searchInput?.value ?? "");
     });
 
-    // 12. Бүлгээр шүүх
+    // 16. Бүлгээр шүүх
     document.querySelectorAll(
       'input[name="foodgroup"]'
     ).forEach(checkbox => {
@@ -333,7 +351,7 @@ export async function renderSearchPage() {
       });
     });
 
-    // 13. Checkbox өөрчлөгдөхөд шинэчлэх
+    // 17. Найрлагын checkbox өөрчлөгдөх
     document.querySelectorAll(
       'input[name="nutrition"]'
     ).forEach(checkbox => {
@@ -344,12 +362,15 @@ export async function renderSearchPage() {
       });
     });
 
-    // 14. Эхний хүснэгтийг харуулах
+    // 18. Эхний хүснэгтийг харуулах
     displayFoods();
 
   } catch (error) {
     console.error(error);
-    app.textContent =
-      "Хүнсний мэдээлэл уншихад алдаа гарлаа.";
+
+    app.textContent = text(
+      "Хүнсний мэдээлэл уншихад алдаа гарлаа.",
+      "Failed to load food information."
+    );
   }
 }

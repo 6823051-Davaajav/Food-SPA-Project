@@ -15,6 +15,20 @@ export const translations = {
     missing: "Хуудас олдсонгүй",
     switch: "English",
 
+searchSettings: {
+  nutritions: "Шим тэжээлийн мэдээлэл",
+  sampleInformations: "Дээжийн мэдээлэл",
+  proximates: "Үндсэн найрлага",
+  minerals: "Эрдэс бодис",
+  vitamins: "Амин дэм",
+  collection_information: "Цуглуулсан мэдээлэл",
+  edible_inedible_part: "Идэх боломжтой хэсэг",
+  pretreatment_conditions: "Урьдчилсан боловсруулалт",
+  description: "Тайлбар",
+  images: "Зураг",
+},
+
+
     nav: {
       brandSpan: "Монгол",
       brand: "хүнсний найрлага",
@@ -24,6 +38,33 @@ export const translations = {
       books: "Ном",
       contact: "Холбоо барих",
       language: "English",
+    },
+
+    foodSearch: {
+      title: "Хүнсний хайлт",
+      searchPlaceholder: "Хүнсний нэрээр хайх...",
+      searchButton: "Хайх",
+      allGroups: "Бүх бүлэг",
+      foodGroups: "Хүнсний бүлгүүд",
+      settings: "Хайлтын тохиргоо",
+      results: "Хайлтын үр дүн",
+      totalFoods: "Нийт хүнс",
+      noResults: "Илэрц олдсонгүй",
+      foodName: "Хүнсний нэр",
+      group: "Хүнсний бүлэг",
+      image: "Зураг",
+      energy: "Илчлэг",
+      protein: "Уураг",
+      fat: "Өөх тос",
+      carbohydrate: "Нүүрс ус",
+      unit: "100 грамм тутамд",
+      close: "Хаах",
+    },
+
+    foodGroups: {
+      "Сүүн бүтээгдэхүүн": "Сүүн бүтээгдэхүүн",
+      "Мах, махан бүтээгдэхүүн": "Мах, махан бүтээгдэхүүн",
+      "Үр тариа": "Үр тариа",
     },
   },
 
@@ -42,6 +83,20 @@ export const translations = {
     missing: "Page not found",
     switch: "Монгол",
 
+searchSettings: {
+  nutritions: "Nutrition Information",
+  sampleInformations: "Sample Information",
+  proximates: "Proximates",
+  minerals: "Minerals",
+  vitamins: "Vitamins",
+  collection_information: "Collection Information",
+  edible_inedible_part: "Edible and Inedible Parts",
+  pretreatment_conditions: "Pretreatment Conditions",
+  description: "Description",
+  images: "Images",
+},
+
+
     nav: {
       brandSpan: "Mongolian",
       brand: "Food Composition",
@@ -51,6 +106,33 @@ export const translations = {
       books: "Books",
       contact: "Contact",
       language: "Монгол",
+    },
+
+    foodSearch: {
+      title: "Food Search",
+      searchPlaceholder: "Search by food name...",
+      searchButton: "Search",
+      allGroups: "All groups",
+      foodGroups: "Food Groups",
+      settings: "Search Settings",
+      results: "Search Results",
+      totalFoods: "Total Foods",
+      noResults: "No results found",
+      foodName: "Food Name",
+      group: "Food Group",
+      image: "Image",
+      energy: "Energy",
+      protein: "Protein",
+      fat: "Fat",
+      carbohydrate: "Carbohydrate",
+      unit: "Per 100 grams",
+      close: "Close",
+    },
+
+    foodGroups: {
+      "Сүүн бүтээгдэхүүн": "Milk and Milk products",
+      "Мах, махан бүтээгдэхүүн": "Meat and Meat products",
+      "Үр тариа": "Cereals and Cereal products",
     },
   },
 };
